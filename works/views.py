@@ -5,29 +5,25 @@ from rest_framework.response import Response
 from .serializers import WorkTimeCheckSerializer, BreakTimeCheckSerializer, CurrentStatusSerializers, WorkStartTimeSaveSerializer
 from .models import WorkTimeCheck, BreakTimeCheck, CurrentStatus
 from datetime import datetime
+from .services import ServiceMethods
 
 # Create your views here.
 def index(request):
-    todayWork = WorkTimeCheck.objects.get(personId="hyun937",todayDate="2019-09-21")
+    todayWork = WorkTimeCheck.objects.get(personId=request.data['personId'],todayDate="2019-09-22")
     context = { 'today' : todayWork }    
     return render(request,'works/index.html' , context)
 
 @api_view(['POST'])
 def workStartPostApi(request):
-    
-    nowDate = datetime.now()
-    serverDate = nowDate.strftime("%Y-%m-%d")
-    serverTime = nowDate.strftime("%H:%M:%S")
+    service = ServiceMethods()
+    return service.updateWorkStartTime(request.data, 'none')
 
-    if len(request.data) != 0:
-        todayWork = WorkTimeCheck.objects.get(personId=request.data['personId'],todayDate=serverDate,workStatus=0)
-        todayWork.workStatus = 0
-        todayWork.workStartTime = serverTime
-        todayWork.save()
 
-        return Response(request.data, status=status.HTTP_201_CREATED)
-    
-    return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['POST'])
+def workEndPostApi(request):
+    service = ServiceMethods()
+    return service.updateWorkEndTime(request.data)
+
 
 @api_view(['GET'])
 def workInfoGetApi(request):
