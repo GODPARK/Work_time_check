@@ -12,6 +12,38 @@ class ServiceMethods:
     def __init__(self):
         self.KST = timezone('Asia/Seoul')
 
+    def currentWorkTime(self,data):
+        nowDate = datetime.now(self.KST)
+        nowDateString = nowDate.strftime("%Y-%m-%d %H:%M:%S").split('.')[0]
+        serverDate = nowDate.strftime("%Y-%m-%d")
+        userId  = data['personId']
+
+        try:
+            todayWork = WorkTimeCheck.objects.get(personId=userId,todayDate=serverDate)
+
+            if todayWork.workStatus == 1:
+                
+                startTime = serverDate + " " + todayWork.workStartTime
+                dateTypeTime = datetime.strptime(startTime, '%Y-%m-%d %H:%M:%S')
+                nowTypeTime = datetime.strptime(nowDateString,'%Y-%m-%d %H:%M:%S')
+                totalTime = nowTypeTime - dateTypeTime
+                totalStringTime = str(totalTime).split('.')[0]
+
+                returnData = {"result":"success", "personId":userId, "serverDate":serverDate, "currentTime":totalStringTime, "method":"currentWorkTime"}
+                return Response(returnData,status=status.HTTP_201_CREATED)
+
+            elif todayWork.workStatus == 2:
+                returnData = {"result":"success", "personId":userId, "serverDate":serverDate, "currentTime":todayWork.totalWorkTime, "method":"currentWorkTime"}
+                return Response(returnData,status=status.HTTP_201_CREATED)
+            else:
+                returnData = {"result":"fail", "personId":userId, "serverDate":serverDate, "method":"currentWorkTime"}
+                return Response(returnData,status=status.HTTP_400_BAD_REQUEST)
+        except:
+            returnData = {"result":"fail", "personId":userId, "serverDate":serverDate, "method":"currentWorkTime"}
+            return Response(returnData,status=status.HTTP_400_BAD_REQUEST)
+
+
+
     def updateWorkStartTime(self, data, modifyDate):
         nowDate = datetime.now(self.KST)
 
@@ -63,8 +95,8 @@ class ServiceMethods:
         userId  = data['personId']
             
         try: 
-            todayWork = WorkTimeCheck.objects.get(personId=userId,todayDate=serverDate,workStatus=1)
-            todayWork.workStatus = 1
+            todayWork = WorkTimeCheck.objects.get(personId=userId,todayDate=serverDate,workStatus__in=[1,2])
+            todayWork.workStatus = 2
 
             startTime = serverDate + " " + todayWork.workStartTime
             dateTypeTime = datetime.strptime(startTime, '%Y-%m-%d %H:%M:%S')

@@ -5,6 +5,7 @@ app_name= 'works'
 urlpatterns = [
     path('', views.index, name='index'),
     path('api/start',views.workStartPostApi, name="startTime" ),
-    path('api/end', views.workEndPostApi, name = "EndTime")
+    path('api/end', views.workEndPostApi, name = "EndTime"),
+    path('api/currentTime', views.currentWorkTimeApi, name="CurrentTime")
 
 ]

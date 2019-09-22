@@ -8,7 +8,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Simple Sidebar - Start Bootstrap Template</title>
+  <title>PJH Work</title>
 
   <!-- Bootstrap core CSS -->
   <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -24,7 +24,7 @@
 
     <!-- Sidebar -->
     <div class="bg-light border-right" id="sidebar-wrapper">
-      <div class="sidebar-heading">Start Bootstrap </div>
+      <div class="sidebar-heading"><strong>Time is Gold</strong> </div>
       <div class="list-group list-group-flush">
         <a href="#" class="list-group-item list-group-item-action bg-light">Dashboard</a>
         <a href="#" class="list-group-item list-group-item-action bg-light">Shortcuts</a>
@@ -40,7 +40,7 @@
     <div id="page-content-wrapper">
 
       <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-        <button class="btn btn-primary" id="menu-toggle">Toggle Menu</button>
+        <button class="btn btn-dark" id="menu-toggle"> Menu</button>
 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -52,9 +52,9 @@
               <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Link</a>
+              <a class="nav-link" href="/logout">logout</a>
             </li>
-            <li class="nav-item dropdown">
+            <!-- <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Dropdown
               </a>
@@ -64,16 +64,43 @@
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#">Something else here</a>
               </div>
-            </li>
+            </li> -->
           </ul>
         </div>
       </nav>
 
       <div class="container-fluid">
-        <h1 class="mt-4">Simple Sidebar</h1>
-        <p>The starting state of the menu will appear collapsed on smaller screens, and will appear non-collapsed on larger screens. When toggled using the button below, the menu will change.</p>
-        <p>Make sure to keep all page content within the <code>#page-content-wrapper</code>. The top navbar is optional, and just for demonstration. Just create an element with the <code>#menu-toggle</code> ID which will toggle the menu when clicked.</p>
+        <br>
+        <div class="card text-white bg-dark">
+          <div class="card-body">
+            {% csrf_token %}
+            <h2 class="mt-4" style="text-align:center"> Work Time </h2>
+            <p></p>
+            <h1 id="currentTimeWork" style="text-align:center"></h1>
+            <div class="btn-group" role="group">
+              <button class="btn btn-light" onclick="loadWorkTime()"> Refresh</button>
+              <button class="btn btn-primary" onclick="workStartButton()" > 출근 </button>
+              <button class="btn btn-warning" onclick="workEndButton()"> 퇴근 </button> 
+            </div>
+          </div>
+        </div>
       </div>
+      <div class="container-fluid">
+          <br>
+          <div class="card text-white bg-success">
+            <div class="card-body">
+              {% csrf_token %}
+              <h2 class="mt-4" style="text-align:center"> Break Time </h2>
+              <p></p>
+              <!-- <h1 id="currentTimeWork" style="text-align:center"></h1> -->
+              <div class="btn-group" role="group">
+                <button class="btn btn-light" onclick=""> Refresh </button>
+                <button class="btn btn-primary" onclick="" > 시작 </button>
+                <button class="btn btn-warning" onclick=""> 종료 </button> 
+              </div>
+            </div>
+          </div>
+        </div>
     </div>
     <!-- /#page-content-wrapper -->
 
@@ -90,6 +117,80 @@
       e.preventDefault();
       $("#wrapper").toggleClass("toggled");
     });
+    
+    var SERVER_API_IP = "http://192.168.0.4:8000/works/api/";
+
+    function loadWorkTime() {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+      if ( xhttp.readyState == 4 && xhttp.status ==201) {
+        var response = JSON.parse(xhttp.responseText);
+        console.log(response)
+        document.getElementById("currentTimeWork").innerHTML = response.currentTime;              
+        }
+      }
+
+      xhttp.open("POST",  SERVER_API_IP + "currentTime", false);
+      xhttp.setRequestHeader("Content-type", "application/json");
+      var csrf_token = '{{csrf_token}}';
+      xhttp.setRequestHeader("X-CSRFToken",csrf_token);
+      var SendData = '{ "personId" : "'+ getPersonId('personId') + '"}'
+      xhttp.send(JSON.stringify(SendData));
+    };
+
+    function workStartButton(){
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+      if ( xhttp.readyState == 4 && xhttp.status ==201) {
+        var response = JSON.parse(xhttp.responseText);
+        console.log(response)
+        document.getElementById("currentTimeWork").innerHTML = "출근 하셨습니다."              
+        }
+        else if(xhttp.status==400)
+        {
+          alert("이미 출근 하셨습니다.")
+        }
+      }
+      
+      xhttp.open("POST", SERVER_API_IP + "start", false);
+      xhttp.setRequestHeader("Content-type", "application/json");
+      var csrf_token = '{{csrf_token}}';
+      xhttp.setRequestHeader("X-CSRFToken",csrf_token);
+      var SendData = '{ "personId" : "'+ getPersonId('personId') + '"}'
+      xhttp.send(JSON.stringify(SendData));
+    };
+
+    function workEndButton(){
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+      if ( xhttp.readyState == 4 && xhttp.status ==201) {
+        var response = JSON.parse(xhttp.responseText);
+        console.log(response)
+        document.getElementById("currentTimeWork").innerHTML = "퇴근 하셨습니다.";              
+        }
+      };
+
+      xhttp.open("POST", SERVER_API_IP + "end", false);
+      xhttp.setRequestHeader("Content-type", "application/json");
+      var csrf_token = '{{csrf_token}}';
+      xhttp.setRequestHeader("X-CSRFToken",csrf_token);
+      var SendData = '{ "personId" : "'+ getPersonId('personId') + '"}'
+      xhttp.send(JSON.stringify(SendData));
+    };
+
+    function getPersonId(cookieName){
+      cookieName = cookieName + '=';
+      var cookieData = document.cookie;
+      var start = cookieData.indexOf(cookieName);
+      var cookieValue = '';
+      if(start != -1){
+        start += cookieName.length;
+        var end = cookieData.indexOf(';', start);
+        if(end == -1) end = cookieData.length;
+        cookieValue = cookieData.substring(start, end);
+      }
+      return cookieValue;
+    }
   </script>
 
 </body>

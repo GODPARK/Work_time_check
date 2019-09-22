@@ -1,2 +1,4 @@
 __pycache__/
-/static/node_module/
+WorkCheck/__pycache__/
+works/__pycache__/
+works/static/node_modules/
