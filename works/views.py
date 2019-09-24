@@ -50,7 +50,7 @@ def currentWorkTimeApi(request):
 @api_view(['POST'])
 def breakStartPostApi(request):
     service = ServiceMethods()
-    return service.updateBreakStartTime(request.COOKIES['personId'], 'none')
+    return service.updateBreakStartTime(request.COOKIES['personId'])
 
 @api_view(['POST'])
 def breakEndPostApi(request):
