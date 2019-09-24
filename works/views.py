@@ -35,15 +35,29 @@ def logout(request):
 @api_view(['POST'])
 def workStartPostApi(request):
     service = ServiceMethods()
-    return service.updateWorkStartTime(json.loads(request.data), 'none')
+    return service.updateWorkStartTime(request.COOKIES['personId'],  'none')
 
 @api_view(['POST'])
 def workEndPostApi(request):
     service = ServiceMethods()
-    return service.updateWorkEndTime(json.loads(request.data))
+    return service.updateWorkEndTime(request.COOKIES['personId'])
 
 @api_view(['POST'])
 def currentWorkTimeApi(request):
-    
     service = ServiceMethods()
-    return service.currentWorkTime(json.loads(request.data))
+    return service.currentWorkTime(request.COOKIES['personId'])
+
+@api_view(['POST'])
+def breakStartPostApi(request):
+    service = ServiceMethods()
+    return service.updateBreakStartTime(request.COOKIES['personId'], 'none')
+
+@api_view(['POST'])
+def breakEndPostApi(request):
+    service = ServiceMethods()
+    return service.updateBreakEndTime(request.COOKIES['personId'])
+
+@api_view(['POST'])
+def currentBreakApi(request):
+    service = ServiceMethods()
+    return service.currentBreakTime(request.COOKIES['personId'])

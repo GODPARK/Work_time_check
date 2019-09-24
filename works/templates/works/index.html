@@ -19,7 +19,6 @@
 </head>
 
 <body>
-
   <div class="d-flex" id="wrapper">
 
     <!-- Sidebar -->
@@ -78,10 +77,13 @@
             <p></p>
             <h1 id="currentTimeWork" style="text-align:center"></h1>
             <div class="btn-group" role="group">
-              <button class="btn btn-light" onclick="loadWorkTime()"> Refresh</button>
+              <button class="btn btn-light" onclick="loadWorkTime()"> 근무 시간</button>
               <button class="btn btn-primary" onclick="workStartButton()" > 출근 </button>
               <button class="btn btn-warning" onclick="workEndButton()"> 퇴근 </button> 
             </div>
+          </div>
+          <div class="card-footer">
+            <small> ** 퇴근시 점심시간 1시간 제외되어 계산됩니다.</small>
           </div>
         </div>
       </div>
@@ -92,11 +94,11 @@
               {% csrf_token %}
               <h2 class="mt-4" style="text-align:center"> Break Time </h2>
               <p></p>
-              <!-- <h1 id="currentTimeWork" style="text-align:center"></h1> -->
+              <h1 id="currentTimeBreak" style="text-align:center"></h1>
               <div class="btn-group" role="group">
-                <button class="btn btn-light" onclick=""> Refresh </button>
-                <button class="btn btn-primary" onclick="" > 시작 </button>
-                <button class="btn btn-warning" onclick=""> 종료 </button> 
+                <button class="btn btn-light" onclick="loadBreakTime()"> 쉬는 시간 </button>
+                <button class="btn btn-primary" onclick="breakStartButton()" > 시작 </button>
+                <button class="btn btn-warning" onclick="breakEndButton()"> 종료 </button> 
               </div>
             </div>
           </div>
@@ -134,8 +136,7 @@
       xhttp.setRequestHeader("Content-type", "application/json");
       var csrf_token = '{{csrf_token}}';
       xhttp.setRequestHeader("X-CSRFToken",csrf_token);
-      var SendData = '{ "personId" : "'+ getPersonId('personId') + '"}'
-      xhttp.send(JSON.stringify(SendData));
+      xhttp.send();
     };
 
     function workStartButton(){
@@ -156,8 +157,7 @@
       xhttp.setRequestHeader("Content-type", "application/json");
       var csrf_token = '{{csrf_token}}';
       xhttp.setRequestHeader("X-CSRFToken",csrf_token);
-      var SendData = '{ "personId" : "'+ getPersonId('personId') + '"}'
-      xhttp.send(JSON.stringify(SendData));
+      xhttp.send();
     };
 
     function workEndButton(){
@@ -174,8 +174,62 @@
       xhttp.setRequestHeader("Content-type", "application/json");
       var csrf_token = '{{csrf_token}}';
       xhttp.setRequestHeader("X-CSRFToken",csrf_token);
-      var SendData = '{ "personId" : "'+ getPersonId('personId') + '"}'
-      xhttp.send(JSON.stringify(SendData));
+      xhttp.send();
+    };
+
+    function breakStartButton(){
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+      if ( xhttp.readyState == 4 && xhttp.status ==201) {
+        var response = JSON.parse(xhttp.responseText);
+        console.log(response)
+        document.getElementById("currentTimeBreak").innerHTML = "Break Start !!"              
+        }
+        else if(xhttp.status==400)
+        {
+          alert("이미 쉬는 중입니다.")
+        }
+      }
+      
+      xhttp.open("POST", SERVER_API_IP + "break/start", false);
+      xhttp.setRequestHeader("Content-type", "application/json");
+      var csrf_token = '{{csrf_token}}';
+      xhttp.setRequestHeader("X-CSRFToken",csrf_token);
+      xhttp.send();
+    };
+
+    function breakEndButton(){
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+      if ( xhttp.readyState == 4 && xhttp.status ==201) {
+        var response = JSON.parse(xhttp.responseText);
+        console.log(response)
+        document.getElementById("currentTimeBreak").innerHTML = "Break End !!";              
+        }
+      };
+
+      xhttp.open("POST", SERVER_API_IP + "break/end", false);
+      xhttp.setRequestHeader("Content-type", "application/json");
+      var csrf_token = '{{csrf_token}}';
+      xhttp.setRequestHeader("X-CSRFToken",csrf_token);
+      xhttp.send();
+    };
+
+    function loadBreakTime() {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+      if ( xhttp.readyState == 4 && xhttp.status ==201) {
+        var response = JSON.parse(xhttp.responseText);
+        console.log(response)
+        document.getElementById("currentTimeBreak").innerHTML = response.currentTime;              
+        }
+      }
+
+      xhttp.open("POST",  SERVER_API_IP + "break/total", false);
+      xhttp.setRequestHeader("Content-type", "application/json");
+      var csrf_token = '{{csrf_token}}';
+      xhttp.setRequestHeader("X-CSRFToken",csrf_token);
+      xhttp.send();
     };
 
     function getPersonId(cookieName){
