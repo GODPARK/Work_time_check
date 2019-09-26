@@ -61,3 +61,13 @@ def breakEndPostApi(request):
 def currentBreakApi(request):
     service = ServiceMethods()
     return service.currentBreakTime(request.COOKIES['personId'])
+
+@api_view(['POST'])
+def dayOffApi(request):
+    service = ServiceMethods()
+    return service.dayOff(request.COOKIES['personId'])
+    
+@api_view(['POST'])
+def totalWorkApi(request):
+    service = ServiceMethods()
+    return service.finalWorkTime(request.COOKIES['personId'])

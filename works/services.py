@@ -34,6 +34,9 @@ class ServiceMethods:
             elif todayWork.workStatus == 2:
                 returnData = {"result":"success", "personId":userId, "serverDate":serverDate, "currentTime":todayWork.totalWorkTime, "method":"currentWorkTime"}
                 return Response(returnData,status=status.HTTP_201_CREATED)
+            elif todayWork.workStatus == 99:
+                returnData = {"result":"success", "personId":userId, "serverDate":serverDate, "currentTime":"DAY OFF", "method":"currentWorkTime"}
+                return Response(returnData,status=status.HTTP_201_CREATED)
             else:
                 returnData = {"result":"fail", "personId":userId, "serverDate":serverDate, "method":"currentWorkTime"}
                 return Response(returnData,status=status.HTTP_400_BAD_REQUEST)
@@ -191,7 +194,6 @@ class ServiceMethods:
             totalTime[0] += tempTotalTime[0]
 
 
-
             result = str(totalTime[0]) + ":" + str(totalTime[1]) + ":" + str(totalTime[2])
 
             returnData = {"result":"success", "personId":userId, "serverDate":serverDate, "currentTime":result, "method":"currentBreakTime"}
@@ -201,3 +203,77 @@ class ServiceMethods:
             returnData = {"result":"fail", "personId":userId, "serverDate":serverDate, "method":"currentBreakTime"}
             return Response(returnData,status=status.HTTP_400_BAD_REQUEST)
 
+
+    def dayOff(self,userId):
+        nowDate = datetime.now(self.KST)
+        serverDate = nowDate.strftime("%Y-%m-%d")
+        
+        try:
+            if WorkTimeCheck.objects.filter(personId=userId,workStatus=99).count()==0 :
+                saveData = {}
+                saveData['personId'] = userId
+                saveData['todayDate'] = serverDate
+                saveData['workStartTime'] = 'none'
+                saveData['workEndTime'] = 'none'
+                saveData['totalWorkTime'] = 'dayOff'
+                saveData['workStatus'] = 99
+                        
+    
+                serializer = WorkTimeCheckSerializer(data=saveData)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response({"result" : "success", "personId" : userId, "serverDate" : serverDate, "method" : "dayOff"}, status=status.HTTP_201_CREATED)
+                else:
+                    return Response({ "result" : "fail" , "personId" : userId, "method" : "dayOff"}, status=status.HTTP_400_BAD_REQUEST)
+                            
+            else:
+                return Response({ "result" : "fail" , "personId" : userId, "method" : "dayOff"}, status=status.HTTP_400_BAD_REQUEST)            
+
+        except:
+            return Response({ "result" : "fail" , "personId" : userId, "method" : "dayOff"}, status=status.HTTP_400_BAD_REQUEST)            
+
+        return Response({ "result" : "fail" , "personId" : userId , "method" : "dayOff"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+    def finalWorkTime(self,userId):
+        nowDate = datetime.now(self.KST)
+        serverDate = nowDate.strftime("%Y-%m-%d")
+        
+        try:
+            todayWork = WorkTimeCheck.objects.get(personId=userId,todayDate=serverDate,workStatus=2)
+            
+            todayTotal = todayWork.totalWorkTime
+            
+            print(todayTotal)
+
+            totalTime = [0,0,0]
+            tempTotalTime = [0,0,0]
+            tempWorkTime = todayTotal.split(":")
+            tempTotalTime[2] += int(tempWorkTime[2])
+            tempTotalTime[1] += int(tempWorkTime[1])
+            tempTotalTime[0] += int(tempWorkTime[0])
+
+            todayBreak = BreakTimeCheck.objects.filter(personId=userId,todayDate=serverDate).all()
+
+
+            for tempData in todayBreak:
+                tempList = tempData.totalBreakTime.split(':')
+                tempTotalTime[2] -= int(tempList[2])
+                tempTotalTime[1] -= int(tempList[1])
+                tempTotalTime[0] -= int(tempList[0])
+
+            print(tempTotalTime)
+
+            totalTime[2] = divmod(tempTotalTime[2] , 60 )[1]
+            totalTime[0], totalTime[1] = divmod( divmod(tempTotalTime[2] , 60 )[0]  + tempTotalTime[1] , 60 )
+            totalTime[0] += tempTotalTime[0]
+
+
+            result = str(totalTime[0]) + "시간 " + str(totalTime[1]) + "분 " + str(totalTime[2]) + "초"
+
+            returnData = {"result":"success", "personId":userId, "serverDate":serverDate, "currentTime":result, "method":"finalWorkTime"}
+            return Response(returnData,status=status.HTTP_201_CREATED)
+            
+        except:
+            returnData = {"result":"fail", "personId":userId, "serverDate":serverDate, "method":"finalWorkTime"}
+            return Response(returnData,status=status.HTTP_400_BAD_REQUEST)

@@ -73,15 +73,32 @@
             {% csrf_token %}
             <h2 class="mt-4" style="text-align:center"> Work Time </h2>
             <p></p>
-            <h1 id="currentTimeWork" style="text-align:center"></h1>
-            <div class="btn-group" role="group">
-              <button class="btn btn-light" onclick="loadWorkTime()"> 근무 시간</button>
-              <button class="btn btn-primary" onclick="workStartButton()" > 출근 </button>
-              <button class="btn btn-warning" onclick="workEndButton()"> 퇴근 </button> 
+            <h3 id="prefixItem" style="text-align:center"></h3>
+            <strong><h1 id="currentTimeWork" style="text-align:center"></h1></strong>
+            <div class="row">
+              <div class="col">
+                <div class="btn-group" role="group">
+                  <button class="btn btn-light active" onclick="workStartButton('{{csrf_token}}')" > 출근 </button>
+                  <button class="btn btn-light" onclick="workEndButton('{{csrf_token}}')"> 퇴근 </button>
+                  <!-- <button class="btn btn-primary" onclick="dayOffButton('{{csrf_token}}')"> 휴가 </button>  -->
+                </div>
+              </div>
+              <div class="col">
+                <div class="btn-group" role="group" style="float:right">
+                  <button class="btn btn-primary" onclick="loadWorkTime('{{csrf_token}}')"> 근무 시간</button>
+                  <button class="btn btn-danger" onclick="totalWorkTime('{{csrf_token}}')"> 최종 시간</button>
+                </div>
+              </div>
             </div>
           </div>
           <div class="card-footer">
-            <small> ** 퇴근시 점심시간 1시간 제외되어 계산됩니다.</small>
+            <p>
+              <small> ** 퇴근시 점심시간 1시간 제외되어 계산됩니다. (퇴근은 여러번 가능합니다.) </small>&nbsp;
+            </p>
+            <p>
+              <small> (근무 시간) : 휴식 시간 적용 전 총 업무 시간,</small>&nbsp;
+              <small> (최종 시간) : 휴식 시간을 적용 후 총 하루 업무 시간</small>
+            </p>
           </div>
         </div>
       </div>
@@ -94,9 +111,9 @@
               <p></p>
               <h1 id="currentTimeBreak" style="text-align:center"></h1>
               <div class="btn-group" role="group">
-                <button class="btn btn-light" onclick="loadBreakTime()"> 쉬는 시간 </button>
-                <button class="btn btn-primary" onclick="breakStartButton()" > 시작 </button>
-                <button class="btn btn-warning" onclick="breakEndButton()"> 종료 </button> 
+                <button class="btn btn-light" onclick="loadBreakTime('{{csrf_token}}')"> 쉬는 시간 </button>
+                <button class="btn btn-primary" onclick="breakStartButton('{{csrf_token}}')" > 시작 </button>
+                <button class="btn btn-warning" onclick="breakEndButton('{{csrf_token}}')"> 종료 </button> 
               </div>
             </div>
           </div>
@@ -111,6 +128,7 @@
   <script src="/static/vendor/jquery/jquery.min.js"></script>
   <script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
+  <script src="/static/vendor/dev/indexButton.js"></script>
   <!-- Menu Toggle Script -->
   <script>
     $("#menu-toggle").click(function(e) {
@@ -118,131 +136,6 @@
       $("#wrapper").toggleClass("toggled");
     });
     
-    var SERVER_API_IP = "http://192.168.0.4:8000/works/api/";
-
-    function loadWorkTime() {
-      var xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function() {
-      if ( xhttp.readyState == 4 && xhttp.status ==201) {
-        var response = JSON.parse(xhttp.responseText);
-        console.log(response)
-        document.getElementById("currentTimeWork").innerHTML = response.currentTime;              
-        }
-      }
-
-      xhttp.open("POST",  SERVER_API_IP + "currentTime", false);
-      xhttp.setRequestHeader("Content-type", "application/json");
-      var csrf_token = '{{csrf_token}}';
-      xhttp.setRequestHeader("X-CSRFToken",csrf_token);
-      xhttp.send();
-    };
-
-    function workStartButton(){
-      var xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function() {
-      if ( xhttp.readyState == 4 && xhttp.status ==201) {
-        var response = JSON.parse(xhttp.responseText);
-        console.log(response)
-        document.getElementById("currentTimeWork").innerHTML = "출근 하셨습니다."              
-        }
-        else if(xhttp.status==400)
-        {
-          alert("이미 출근 하셨습니다.")
-        }
-      }
-      
-      xhttp.open("POST", SERVER_API_IP + "start", false);
-      xhttp.setRequestHeader("Content-type", "application/json");
-      var csrf_token = '{{csrf_token}}';
-      xhttp.setRequestHeader("X-CSRFToken",csrf_token);
-      xhttp.send();
-    };
-
-    function workEndButton(){
-      var xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function() {
-      if ( xhttp.readyState == 4 && xhttp.status ==201) {
-        var response = JSON.parse(xhttp.responseText);
-        console.log(response)
-        document.getElementById("currentTimeWork").innerHTML = "퇴근 하셨습니다.";              
-        }
-      };
-
-      xhttp.open("POST", SERVER_API_IP + "end", false);
-      xhttp.setRequestHeader("Content-type", "application/json");
-      var csrf_token = '{{csrf_token}}';
-      xhttp.setRequestHeader("X-CSRFToken",csrf_token);
-      xhttp.send();
-    };
-
-    function breakStartButton(){
-      var xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function() {
-      if ( xhttp.readyState == 4 && xhttp.status ==201) {
-        var response = JSON.parse(xhttp.responseText);
-        console.log(response)
-        document.getElementById("currentTimeBreak").innerHTML = "Break Start !!"              
-        }
-        else if(xhttp.status==400)
-        {
-          alert("이미 쉬는 중입니다.")
-        }
-      }
-      
-      xhttp.open("POST", SERVER_API_IP + "break/start", false);
-      xhttp.setRequestHeader("Content-type", "application/json");
-      var csrf_token = '{{csrf_token}}';
-      xhttp.setRequestHeader("X-CSRFToken",csrf_token);
-      xhttp.send();
-    };
-
-    function breakEndButton(){
-      var xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function() {
-      if ( xhttp.readyState == 4 && xhttp.status ==201) {
-        var response = JSON.parse(xhttp.responseText);
-        console.log(response)
-        document.getElementById("currentTimeBreak").innerHTML = "Break End !!";              
-        }
-      };
-
-      xhttp.open("POST", SERVER_API_IP + "break/end", false);
-      xhttp.setRequestHeader("Content-type", "application/json");
-      var csrf_token = '{{csrf_token}}';
-      xhttp.setRequestHeader("X-CSRFToken",csrf_token);
-      xhttp.send();
-    };
-
-    function loadBreakTime() {
-      var xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function() {
-      if ( xhttp.readyState == 4 && xhttp.status ==201) {
-        var response = JSON.parse(xhttp.responseText);
-        console.log(response)
-        document.getElementById("currentTimeBreak").innerHTML = response.currentTime;              
-        }
-      }
-
-      xhttp.open("POST",  SERVER_API_IP + "break/total", false);
-      xhttp.setRequestHeader("Content-type", "application/json");
-      var csrf_token = '{{csrf_token}}';
-      xhttp.setRequestHeader("X-CSRFToken",csrf_token);
-      xhttp.send();
-    };
-
-    function getPersonId(cookieName){
-      cookieName = cookieName + '=';
-      var cookieData = document.cookie;
-      var start = cookieData.indexOf(cookieName);
-      var cookieValue = '';
-      if(start != -1){
-        start += cookieName.length;
-        var end = cookieData.indexOf(';', start);
-        if(end == -1) end = cookieData.length;
-        cookieValue = cookieData.substring(start, end);
-      }
-      return cookieValue;
-    }
   </script>
 
 </body>
