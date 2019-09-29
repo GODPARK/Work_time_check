@@ -10,8 +10,9 @@ https://docs.djangoproject.com/en/2.2/howto/deployment/wsgi/
 import os ,sys
 
 from django.core.wsgi import get_wsgi_application
+import django
 
-path = os.path.abspath(__file__+'/../..')
+path = os.path.abspath(django.__file__+'/../..')
 if path not in sys.path:
     sys.path.append(path)
 
