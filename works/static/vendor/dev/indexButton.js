@@ -1,6 +1,6 @@
 
 // var SERVER_API_IP = "http://192.168.0.4:8389/works/api/";
-var SERVER_API_IP = "http://34.66.89.187:8389/works/api/";
+var SERVER_API_IP = "http://34.84.171.132:8389/works/api/";
 
   function loadWorkTime(csrf_token) {
       var xhttp = new XMLHttpRequest();

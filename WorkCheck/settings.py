@@ -23,19 +23,19 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'kqg8!hla-0b#99b-g#sa3*$3*4_!j8kl!nc7(086516qy1#it1'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     '192.168.0.4',
     '221.153.74.174',
-    '34.66.89.187'
+    '34.84.171.132'
 ]
 
 
 # Application definition
-
+# pip3 install djangorestframework
 INSTALLED_APPS = [
     'rest_framework',
     'django.contrib.admin',
@@ -80,7 +80,8 @@ WSGI_APPLICATION = 'WorkCheck.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
+# pip3 install mysql-connector-python
+# python3 manage.py migrate
 DATABASES = {
     'default': {
         'NAME': 'djangoDB2',
@@ -111,8 +112,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
-# logging
 
 
 
