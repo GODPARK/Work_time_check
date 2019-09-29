@@ -1,7 +1,8 @@
 
-var SERVER_API_IP = "http://192.168.0.4:8389/works/api/";
+// var SERVER_API_IP = "http://192.168.0.4:8389/works/api/";
+var SERVER_API_IP = "http://34.66.89.187:8389/works/api/";
 
-    function loadWorkTime(csrf_token) {
+  function loadWorkTime(csrf_token) {
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function() {
       if ( xhttp.readyState == 4 && xhttp.status ==201) {
