@@ -137,4 +137,4 @@ STATIC_URL = '/static/'
 #     os.path.join(BASE_DIR,'static')
 # ]
 # python manage.py collectstatic
-STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+STATIC_ROOT = "/home/rootjh937/Django/WorkCheckDjango/static/"
