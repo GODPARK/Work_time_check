@@ -198,7 +198,8 @@ class ServiceMethods:
             totalTime[0] += tempTotalTime[0]
 
 
-            result = str(totalTime[0] -1) + ":" + str(totalTime[1]) + ":" + str(totalTime[2])
+            result = str(totalTime[0]) + ":" + str(totalTime[1]) + ":" + str(totalTime[2])
+            
 
             returnData = {"result":"success", "personId":userId, "serverDate":serverDate, "currentTime":result, "method":"currentBreakTime"}
             return Response(returnData,status=status.HTTP_201_CREATED)
@@ -273,7 +274,7 @@ class ServiceMethods:
             totalTime[0] += tempTotalTime[0]
 
 
-            result = str(totalTime[0]) + "시간 " + str(totalTime[1]) + "분 " + str(totalTime[2]) + "초"
+            result = str(totalTime[0]-1) + "시간 " + str(totalTime[1]) + "분 " + str(totalTime[2]) + "초"
 
             returnData = {"result":"success", "personId":userId, "serverDate":serverDate, "currentTime":result, "method":"finalWorkTime"}
             return Response(returnData,status=status.HTTP_201_CREATED)
