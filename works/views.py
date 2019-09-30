@@ -9,11 +9,14 @@ from .services import ServiceMethods
 from django.conf import settings
 from django.contrib import auth
 from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
 import json
 
 # Create your views here.
+@login_required
 def index(request):
-    return render(request,'works/index.html')
+    # SERVERIP = "192.168.0.4"
+    return render(request,'works/index.html', { 'personId' : request.COOKIES['personId']})
 
 def login(request):
     if request.method == "POST":
