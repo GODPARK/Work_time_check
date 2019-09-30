@@ -103,8 +103,9 @@ class ServiceMethods:
             nowTypeTime = datetime.strptime(nowDateString,'%Y-%m-%d %H:%M:%S')
             totalTime = nowTypeTime - dateTypeTime
             
-            # 점심 시간 포함 
+            #점심 시간 포함 
             # totalStringTime = str(totalTime + timedelta(hours=-1)).split('.')[0]
+            # 점심 시간 미포함
             totalStringTime = str(totalTime).split('.')[0]
 
             todayWork.workEndTime = serverTime
@@ -194,7 +195,7 @@ class ServiceMethods:
             
             totalTime[2] = divmod(tempTotalTime[2] , 60 )[1]
             totalTime[0], totalTime[1] = divmod( divmod(tempTotalTime[2] , 60 )[0]  + tempTotalTime[1] , 60 )
-            totalTime[0] += tempTotalTime[0]
+            totalTime[0] += tempTotalTime[0] -1
 
 
             result = str(totalTime[0]) + ":" + str(totalTime[1]) + ":" + str(totalTime[2])
