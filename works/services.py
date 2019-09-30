@@ -195,10 +195,10 @@ class ServiceMethods:
             
             totalTime[2] = divmod(tempTotalTime[2] , 60 )[1]
             totalTime[0], totalTime[1] = divmod( divmod(tempTotalTime[2] , 60 )[0]  + tempTotalTime[1] , 60 )
-            totalTime[0] += tempTotalTime[0] -1
+            totalTime[0] += tempTotalTime[0]
 
 
-            result = str(totalTime[0]) + ":" + str(totalTime[1]) + ":" + str(totalTime[2])
+            result = str(totalTime[0] -1) + ":" + str(totalTime[1]) + ":" + str(totalTime[2])
 
             returnData = {"result":"success", "personId":userId, "serverDate":serverDate, "currentTime":result, "method":"currentBreakTime"}
             return Response(returnData,status=status.HTTP_201_CREATED)
