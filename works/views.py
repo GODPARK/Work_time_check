@@ -6,17 +6,25 @@ from .serializers import WorkTimeCheckSerializer, BreakTimeCheckSerializer, Curr
 from .models import WorkTimeCheck, BreakTimeCheck, CurrentStatus
 from datetime import datetime
 from .services import ServiceMethods
+from .modifyServices import ModifyServiceMethods
 from django.conf import settings
 from django.contrib import auth
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 import json
 
+# SERVERIP = "http://192.168.0.4:8000"
+SERVERIP = "http://34.84.171.132"
+SERVERAPIIP = SERVERIP + "/works/api/"
+
 # Create your views here.
 @login_required
 def index(request):
-    # SERVERIP = "192.168.0.4"
-    return render(request,'works/index.html', { 'personId' : request.COOKIES['personId']})
+    if 'personId' in request.COOKIES:
+        return render(request,'works/index.html', { 'personId' : request.COOKIES['personId'], 'serverApiIp' : SERVERAPIIP, 'serverIp' : SERVERIP})
+    else:
+        return render(request,'works/login.html')
+
 
 def login(request):
     if request.method == "POST":
@@ -35,6 +43,24 @@ def logout(request):
     auth.logout(request)
     return redirect('/login')
 
+def month(request):
+    if 'personId' in request.COOKIES:
+        data = { 'personId' : request.COOKIES['personId'], 'serverApiIp' : SERVERAPIIP, 'serverIp' : SERVERIP }
+        return render(request,'works/month.html', data )
+    else:
+        return render(request,'works/login.html')
+
+def modify(request):
+    if 'personId' in request.COOKIES:
+        data = { 'personId' : request.COOKIES['personId'], 'serverApiIp' : SERVERAPIIP, 'serverIp' : SERVERIP }
+        return render(request,'works/modify.html', data )
+    else:
+        return render(request,'works/login.html')
+
+'''
+    service.py api call
+    업무 시간 및 휴식 시간 체크 API  
+'''
 @api_view(['POST'])
 def workStartPostApi(request):
     service = ServiceMethods()
@@ -49,6 +75,7 @@ def workEndPostApi(request):
 def currentWorkTimeApi(request):
     service = ServiceMethods()
     return service.currentWorkTime(request.COOKIES['personId'])
+
 
 @api_view(['POST'])
 def breakStartPostApi(request):
@@ -74,3 +101,13 @@ def dayOffApi(request):
 def totalWorkApi(request):
     service = ServiceMethods()
     return service.finalWorkTime(request.COOKIES['personId'])
+
+
+'''
+    modifyService.py api call
+    업무 시간 및 휴식 시간 수동 수정용 API  
+'''
+@api_view(['POST'])
+def modifyWorkApi(request):
+    modifyService = ModifyServiceMethods()
+    return modifyService.modifyWork(request.COOKIES['personId'],request.data)

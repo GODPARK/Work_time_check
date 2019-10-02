@@ -11,6 +11,6 @@ urlpatterns = [
     path('api/break/end', views.breakEndPostApi, name="breakEndTime"),
     path('api/break/total', views.currentBreakApi, name="CurrentBreak"),
     path('api/dayoff', views.dayOffApi, name="dayOff"),
-    path('api/total', views.totalWorkApi, name="totalTime")
-
+    path('api/total', views.totalWorkApi, name="totalTime"),
+    path('api/modify/work',views.modifyWorkApi, name="modifyWork")
 ]

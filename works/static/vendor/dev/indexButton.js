@@ -1,8 +1,8 @@
 
-// var SERVER_API_IP = "http://192.168.0.4:8389/works/api/";
-var SERVER_API_IP = "http://34.84.171.132/works/api/";
+ var SERVER_API_IP = "http://192.168.0.4:8000/works/api/";
+// var SERVER_API_IP = "http://34.84.171.132/works/api/";
 
-  function loadWorkTime(csrf_token) {
+  function loadWorkTime(csrf_token, server_ip) {
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function() {
       if ( xhttp.readyState == 4 && xhttp.status ==201) {
@@ -12,7 +12,7 @@ var SERVER_API_IP = "http://34.84.171.132/works/api/";
         }
       }
 
-      xhttp.open("POST",  SERVER_API_IP + "currentTime", false);
+      xhttp.open("POST",  server_ip + "currentTime", false);
       xhttp.setRequestHeader("Content-type", "application/json");
     //   var csrf_token = '{{csrf_token}}';
       xhttp.setRequestHeader("X-CSRFToken",csrf_token);
