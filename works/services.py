@@ -57,6 +57,9 @@ class ServiceMethods:
                 todayWork = WorkTimeCheck.objects.get(personId=userId,todayDate=serverDate,workStatus=1)
                 todayWork.workStatus = 1
                 todayWork.workStartTime = serverTime
+                todayWork.dayNum = nowDate.day
+                todayWork.monthNum = nowDate.month
+                todayWork.yearNum = nowDate.year
                 todayWork.save()
 
                 return Response({"result" : "success", "personId" : userId, "serverDate" : serverDate, "serverTime" : serverTime, "method" : "workStartPostApi"}, status=status.HTTP_201_CREATED)                
@@ -70,6 +73,9 @@ class ServiceMethods:
                 saveData['workEndTime'] = 'none'
                 saveData['totalWorkTime'] = 'none'
                 saveData['workStatus'] = 1
+                saveData['dayNum'] = nowDate.day
+                saveData['monthNum'] = nowDate.month
+                saveData['yearNum'] = nowDate.year
                     
  
                 serializer = WorkTimeCheckSerializer(data=saveData)

@@ -10,7 +10,10 @@ class WorkTimeCheckSerializer(serializers.HyperlinkedModelSerializer):
             'workEndTime',
             'todayDate',
             'totalWorkTime',
-            'workStatus'
+            'workStatus',
+            'dayNum',
+            'monthNum',
+            'yearNum'
              )
 
 class WorkStartTimeSaveSerializer(serializers.HyperlinkedModelSerializer):
