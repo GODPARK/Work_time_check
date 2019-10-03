@@ -26,13 +26,16 @@ class ServiceMethods:
                 dateTypeTime = datetime.strptime(startTime, '%Y-%m-%d %H:%M:%S')
                 nowTypeTime = datetime.strptime(nowDateString,'%Y-%m-%d %H:%M:%S')
                 totalTime = nowTypeTime - dateTypeTime
-                totalStringTime = str(totalTime).split('.')[0]
 
-                returnData = {"result":"success", "personId":userId, "serverDate":serverDate, "currentTime":totalStringTime, "method":"currentWorkTime"}
+                totalStringTime = str(totalTime).split('.')[0]
+                workPercent = str(int((int(totalStringTime.split(":")[0]) /8 )*100)) + "%"
+
+                returnData = {"result":"success", "personId":userId, "serverDate":serverDate, "currentTime":totalStringTime, "workPercent" : workPercent, "method":"currentWorkTime"}
                 return Response(returnData,status=status.HTTP_201_CREATED)
 
             elif todayWork.workStatus == 2:
-                returnData = {"result":"success", "personId":userId, "serverDate":serverDate, "currentTime":todayWork.totalWorkTime, "method":"currentWorkTime"}
+                workPercent = str(int((int(todayWork.totalWorkTime.split(":")[0]) /8 )*100)) + "%"
+                returnData = {"result":"success", "personId":userId, "serverDate":serverDate, "currentTime":todayWork.totalWorkTime, "workPercent" : workPercent, "method":"currentWorkTime"}
                 return Response(returnData,status=status.HTTP_201_CREATED)
             elif todayWork.workStatus == 99:
                 returnData = {"result":"success", "personId":userId, "serverDate":serverDate, "currentTime":"DAY OFF", "method":"currentWorkTime"}

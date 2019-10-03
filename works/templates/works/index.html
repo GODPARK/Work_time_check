@@ -15,6 +15,7 @@
 
   <!-- Custom styles for this template -->
   <link href="/static/css/simple-sidebar.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/static/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
 
 </head>
 
@@ -25,6 +26,7 @@
     <div class="bg-light border-right" id="sidebar-wrapper">
       <div class="sidebar-heading"><strong>Time is Gold</strong> </div>
       <div class="list-group list-group-flush">
+        <a href="{{serverIp}}/notice" class="list-group-item list-group-item-action bg-light"><i class="fa fa-bell"></i> notice</a>
         <a href="{{serverIp}}/works" class="list-group-item list-group-item-action bg-light">Today</a>
         <a href="{{serverIp}}/month" class="list-group-item list-group-item-action bg-light">Month</a>
         <a href="{{serverIp}}/modify" class="list-group-item list-group-item-action bg-light">Modify</a>
@@ -40,7 +42,7 @@
         <button class="btn btn-dark" id="menu-toggle"> Menu</button>
 
         <h4>
-            User : {{ personId }}
+            <i class="fa fa-user-circle"></i> {{ personId }}
         </h4>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -71,48 +73,53 @@
       </nav>
       <br>
       <div class="container-fluid">
-          <a class="btn btn-secondary btn-block" role="button" href="{{serverIp}}/modify"> 수동 시간 설정</a>
-      </div>
-      <div class="container-fluid">
         <br>
         
         <div class="card text-white bg-dark">
           <div class="card-body">
             {% csrf_token %}
-            <h2 class="mt-4" style="text-align:center"> Work Time </h2>
+            <h2 class="mt-4" style="text-align:center"> Work Time <i class="fa fa-clock-o"></i></h2>
             <p></p>
-            <h3 id="prefixItem" style="text-align:center"></h3>
+            <h5 id="prefixItem" style="text-align:center;color:silver"></h5>
             <strong><h1 id="currentTimeWork" style="text-align:center"></h1></strong>
-            <div class="row">
-              <div class="col">
-                <div class="btn-group" role="group">
-                  <button class="btn btn-light active" onclick="workStartButton('{{csrf_token}}','{{serverApiIp}}')" > 출근 </button>
-                  <button class="btn btn-light" onclick="workEndButton('{{csrf_token}}','{{serverApiIp}}')"> 퇴근 </button>
-                  <!-- <button class="btn btn-primary" onclick="dayOffButton('{{csrf_token}}')"> 휴가 </button>  -->
+            <br>
+            <div class="progress">
+              <div id="workProgress" class="progress-bar bg-danger" role="progressbar" style="width: 100%">
                 </div>
               </div>
-              <div class="col">
-                <div class="btn-group" role="group" style="float:right">
-                  <button class="btn btn-primary" onclick="loadWorkTime('{{csrf_token}}','{{serverApiIp}}')"> 근무 시간</button>
-                  <button class="btn btn-danger" onclick="totalWorkTime('{{csrf_token}}','{{serverApiIp}}')"> 최종 시간</button>
+              <p style="text-align:right;color:slategrey">8h</p>
+              <div class="row">
+                <div class="col">
+                  <div class="btn-group" role="group">
+                    <button class="btn btn-light active" onclick="workStartButton('{{csrf_token}}','{{serverApiIp}}')" > 출근 </button>
+                    <button class="btn btn-light" onclick="workEndButton('{{csrf_token}}','{{serverApiIp}}')"> 퇴근 </button>
+                    <!-- <button class="btn btn-primary" onclick="dayOffButton('{{csrf_token}}')"> 휴가 </button>  -->
+                  </div>
                 </div>
+                <div class="col">
+                  <div class="btn-group" role="group" style="float:right">
+                      <button class="btn btn-primary" onclick="loadWorkTime('{{csrf_token}}','{{serverApiIp}}')"> 근무 시간</button>
+                      <button class="btn btn-danger" onclick="totalWorkTime('{{csrf_token}}','{{serverApiIp}}')"> 최종 시간</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer">
+                <p>
+                  <small> $ 출근 : 출근 한번만 가능.</small>&nbsp;<br>
+                  <small> $ 퇴근 : 퇴근 버튼 여러번 가능.</small>&nbsp;<br>
+                  <small> $ 근무 시간 = 체류 시간 </small>&nbsp;<br>
+                  <small> $ 최종 시간 = 체류 시간 - 휴식 시간 - 점심시간 1h </small>
+                </p>
               </div>
             </div>
           </div>
-          <div class="card-footer">
-            <p>
-              <small> ** 최종 시간 확인 시 점심시간 1시간 제외되어 계산됩니다. </small>&nbsp;
-            </p>
-            <p>
-              <small> (퇴근 시간) : 퇴근 버튼 여러번 가능.</small>&nbsp;<br>
-              <small> (근무 시간) : 휴식 시간 적용 전 총 업무 시간,</small>&nbsp;<br>
-              <small> (최종 시간) : 휴식 시간을 적용 후 총 하루 업무 시간</small>
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="container-fluid">
           <br>
+          <div class="container-fluid">
+            <a class="btn btn-dark btn-block" role="button" href="{{serverIp}}/modify"><i class="fa fa-cog"></i> 수동 시간 설정</a>
+          </div>
+          <div class="container-fluid">
+            <br>
           <div class="card text-white bg-success">
             <div class="card-body">
               {% csrf_token %}
@@ -152,7 +159,12 @@
       if ( xhttp.readyState == 4 && xhttp.status ==201) {
         var response = JSON.parse(xhttp.responseText);
         // console.log(response)
-        document.getElementById("currentTimeWork").innerHTML = response.currentTime;              
+        document.getElementById("prefixItem").innerHTML = "";
+        document.getElementById("currentTimeWork").innerHTML = response.currentTime;     
+        document.getElementById("workProgress").innerHTML = response.currentTime;    
+        document.getElementById("workProgress").style.width = response.workPercent;
+        document.getElementById("workProgress").className ="progress-bar bg-primary"
+             
         }
       }
 
@@ -190,7 +202,7 @@
       if ( xhttp.readyState == 4 && xhttp.status ==201) {
         var response = JSON.parse(xhttp.responseText);
         // console.log(response)
-        document.getElementById("currentTimeWork").innerHTML = "퇴근 하셨습니다.";              
+        document.getElementById("currentTimeWork").innerHTML = "퇴근 축하 합니다!!";              
         }
       };
 

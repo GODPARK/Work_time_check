@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import WorkTimeCheck, BreakTimeCheck, CurrentStatus
+from .models import WorkTimeCheck, BreakTimeCheck, CurrentStatus, Suggestion
 
 class WorkTimeCheckSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -38,6 +38,14 @@ class BreakTimeCheckSerializer(serializers.HyperlinkedModelSerializer):
             'dayNum',
             'monthNum',
             'yearNum'
+        )
+
+class SuggestionsSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Suggestion
+        fields = (
+            'personId',
+            'content'
         )
 
 class CurrentStatusSerializers(serializers.HyperlinkedModelSerializer):

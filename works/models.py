@@ -13,6 +13,11 @@ class WorkTimeCheck(models.Model):
     totalWorkTime  = models.CharField(max_length=300)
     workStatus = models.IntegerField(default=0)
 
+class Suggestion(models.Model):
+    objects = models.Manager()
+    personId = models.CharField(max_length=200)
+    content = models.TextField()
+
    
 class BreakTimeCheck(models.Model):
     objects = models.Manager()

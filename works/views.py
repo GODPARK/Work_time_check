@@ -2,8 +2,8 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import WorkTimeCheckSerializer, BreakTimeCheckSerializer, CurrentStatusSerializers, WorkStartTimeSaveSerializer
-from .models import WorkTimeCheck, BreakTimeCheck, CurrentStatus
+from .serializers import WorkTimeCheckSerializer, BreakTimeCheckSerializer, CurrentStatusSerializers, WorkStartTimeSaveSerializer , SuggestionsSerializer
+from .models import WorkTimeCheck, BreakTimeCheck, CurrentStatus ,Suggestion
 from datetime import datetime
 from .services import ServiceMethods
 from .modifyServices import ModifyServiceMethods
@@ -14,11 +14,15 @@ from django.contrib.auth.decorators import login_required
 import json
 
 #SERVERIP = "http://192.168.0.4:8000"
-#SERVERIP = "http://34.84.171.132"
-SERVERIP = "http://127.0.0.1:8000"
+SERVERIP = "http://34.84.171.132"
+#SERVERIP = "http://127.0.0.1:8000"
 SERVERAPIIP = SERVERIP + "/works/api/"
 
 # Create your views here.
+''' 
+    html rendering 하는 부분
+'''
+
 @login_required
 def index(request):
     if 'personId' in request.COOKIES:
@@ -44,6 +48,7 @@ def logout(request):
     auth.logout(request)
     return redirect('/login')
 
+@login_required
 def month(request):
     if 'personId' in request.COOKIES:
         data = { 'personId' : request.COOKIES['personId'], 'serverApiIp' : SERVERAPIIP, 'serverIp' : SERVERIP }
@@ -51,10 +56,29 @@ def month(request):
     else:
         return render(request,'works/login.html')
 
-def modify(request):
+@login_required
+def modifyWork(request):
     if 'personId' in request.COOKIES:
         data = { 'personId' : request.COOKIES['personId'], 'serverApiIp' : SERVERAPIIP, 'serverIp' : SERVERIP }
         return render(request,'works/modify.html', data )
+    else:
+        return render(request,'works/login.html')
+
+@login_required
+def notice(request):
+    if 'personId' in request.COOKIES:
+        suggestion = Suggestion.objects.all()
+        data = { 
+            'personId' : request.COOKIES['personId'], 
+            'serverApiIp' : SERVERAPIIP, 
+            'serverIp' : SERVERIP,
+            'updateDate' : "2019-10-03",
+            'updateList' : "공지사항 기능 추가, 제안 기능 추가, 출/퇴근 시간 수정 가능",
+            'todoList' : '한달 업무 시간 확인 , 휴게 시간 수정 기능',
+            'suggestion' : suggestion
+            }
+        
+        return render(request,'works/notice.html', data )
     else:
         return render(request,'works/login.html')
 
@@ -117,3 +141,28 @@ def modifyWorkSearchApi(request):
 def modifyWorkApi(request):
     modifyService = ModifyServiceMethods()
     return modifyService.modifyWork(request.COOKIES['personId'],request.data)
+
+
+'''
+    notice api call
+'''
+@api_view(['POST'])
+def suggestionApi (request):
+    
+    try:
+        saveData = {}
+        print(request.data)
+        saveData['personId'] = request.COOKIES['personId']
+        saveData['content'] = request.data['suggestion']
+        
+        serializer = SuggestionsSerializer(data=saveData)
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            return Response({ "result" : "fail", "method" : "suggestionApi"}, status=status.HTTP_400_BAD_REQUEST)
+
+    except:
+        return Response({ "result" : "fail", "method" : "suggestionApi"}, status=status.HTTP_400_BAD_REQUEST)
+
+    returnData = {}
+    return Response(returnData,status=status.HTTP_201_CREATED)

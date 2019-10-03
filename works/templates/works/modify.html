@@ -12,6 +12,7 @@
 
   <!-- Bootstrap core CSS -->
   <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/static/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
 
   <!-- Custom styles for this template -->
   <link href="/static/css/simple-sidebar.css" rel="stylesheet">
@@ -25,6 +26,7 @@
     <div class="bg-light border-right" id="sidebar-wrapper">
       <div class="sidebar-heading"><strong>Time is Gold</strong> </div>
       <div class="list-group list-group-flush">
+        <a href="{{serverIp}}/notice" class="list-group-item list-group-item-action bg-light"><i class="fa fa-bell"></i> notice</a>
         <a href="{{serverIp}}/works" class="list-group-item list-group-item-action bg-light">Today</a>
         <a href="{{serverIp}}/month" class="list-group-item list-group-item-action bg-light">Month</a>
         <a href="{{serverIp}}/modify" class="list-group-item list-group-item-action bg-light">Modify</a>
@@ -40,7 +42,7 @@
         <button class="btn btn-dark" id="menu-toggle"> Menu</button>
 
         <h4>
-            User : {{ personId }}
+            <i class="fa fa-user-circle"></i> {{ personId }}
         </h4>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -72,9 +74,10 @@
 
       <div class="container-fluid">
           <br>
+          <h3> Self Modify Your Work Time</h3>
             <div class="card text-white bg-dark">
                 <div class="card-body">
-                    <h5> Self Modify Your Work Time</h5>
+                  <h5><i class="fa fa-calendar"></i> Select Date. </h5>
                     <div class="input-group mb-3">
                         <input type="date" id="workDate" class="form-control" aria-label="date" aria-describedby="button-addon2">
                         <div class="input-group-append">
@@ -114,21 +117,29 @@
                   </div>
                 </div>
                 <br>
-                <button class="btn btn-primary btn-block" onclick="modifyWorkTime('{{csrf_token}}','{{serverApiIp}}')"> save </button>
+                <button class="btn btn-primary btn-block" onclick="modifyWorkTime('{{csrf_token}}','{{serverApiIp}}')"><i class="fa fa-floppy-o"></i> save </button>
                 <br>
-                <h5> 최종 시간 확인 ( 휴게 시간 반영 되지 않은 시간) </h5>
-                <div class="row">
-                  <div class="col">
-                    <p> before </p>
-                    <h5 id="beforeTotalWork" style="text-align:center"></h5>
-                  </div>
-                  <div class="col">
-                    <p> after </p>
-                    <h5 id="afterTotalWork" style="text-align:center"></h5>
-                  </div>
-                </div>
+                
               </div>
             </div>
+      </div>
+      <div class="container-fluid">
+          <br>
+          <div class="card text-white bg-dark">
+              <div class="card-body">
+                  <h5> 최종 시간 확인 ( 휴게 시간 반영 되지 않은 시간) </h5>
+                  <div class="row">
+                    <div class="col">
+                      <p> before </p>
+                      <h5 id="beforeTotalWork" style="text-align:center"></h5>
+                    </div>
+                    <div class="col">
+                      <p> after </p>
+                      <h5 id="afterTotalWork" style="text-align:center; color: red"></h5>
+                    </div>
+                  </div>
+              </div>
+          </div>
       </div>
 
     </div>
@@ -212,6 +223,28 @@
       {
         xhttp.send(JSON.stringify({"searchDate" : searchDate}));
       }
+    };
+
+
+    function modifySearchBreakTime(csrf_token, server_ip) {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+      if ( xhttp.readyState == 4 && xhttp.status ==201) {
+        var response = JSON.parse(xhttp.responseText);
+        // console.log(response);
+
+        }
+      }
+
+      xhttp.open("POST",  server_ip + "modify/search", false);
+      xhttp.setRequestHeader("Content-type", "application/json");
+    //   var csrf_token = '{{csrf_token}}';
+      xhttp.setRequestHeader("X-CSRFToken",csrf_token);
+      var searchDate = document.getElementById("workDate").value
+      xhttp.send(JSON.stringify(
+        {"searchDate" : searchDate}
+        ));
+      
     };
     
   </script>

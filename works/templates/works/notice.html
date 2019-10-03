@@ -12,10 +12,10 @@
 
   <!-- Bootstrap core CSS -->
   <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="/static/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
 
   <!-- Custom styles for this template -->
   <link href="/static/css/simple-sidebar.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/static/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
 
 </head>
 
@@ -31,7 +31,7 @@
         <a href="{{serverIp}}/month" class="list-group-item list-group-item-action bg-light">Month</a>
         <a href="{{serverIp}}/modify" class="list-group-item list-group-item-action bg-light">Modify</a>
         <a href="{{serverIp}}/logout" class="list-group-item list-group-item-action bg-light">logout</a>
-      </div>
+    </div>
     </div>
     <!-- /#sidebar-wrapper -->
 
@@ -73,9 +73,51 @@
       </nav>
       <br>
       <div class="container-fluid">
-          <h4 style="text-align:center"> 개발 예정 </h4>
-      </div>
+        <br>
+        <h2> Notice. </h2>
+        <div class="card text-white bg-dark">
+            <div class="card-body">
+            {% csrf_token %}
+                <h5> Update 항목</h5>
+                <p> ( Ver. {{updateDate}} ) {{ updateList }}</p>
+            </div>
+        </div>
+        <br>
+        <div class="card text-black bg-light">
+            <div class="card-body">
+            {% csrf_token %}
+                <h5> todo 항목</h5>
+                <p>{{todoList}}</p>
+            </div>
+        </div>
 
+        <br><br>
+        <h2> Suggestions. </h2>
+        <div class="card text-black bg-light">
+            <div class="card-body">
+            {% csrf_token %}
+            <table class="table table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>User</th>
+                        <th>Content</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in suggestion %}
+                    <tr> 
+                        <td>{{ item.personId }}</td>
+                        <td>{{ item.content }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="input-group">
+                <textarea id="suggestionText" class="form-control" placeholder="건의 사항"></textarea>
+                <button class="btn btn-primary" onclick="saveSuggestions('{{csrf_token}}','{{serverApiIp}}')">save</button>
+            </div>
+            </div>
+        </div>
     </div>
     <!-- /#page-content-wrapper -->
 
@@ -86,15 +128,40 @@
   <script src="/static/vendor/jquery/jquery.min.js"></script>
   <script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
+  <!-- <script src="/static/vendor/dev/indexButton.js"></script> -->
   <!-- Menu Toggle Script -->
   <script>
     $("#menu-toggle").click(function(e) {
       e.preventDefault();
       $("#wrapper").toggleClass("toggled");
     });
-    
-    
 
+
+    function saveSuggestions(csrf_token, server_ip) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+        if ( xhttp.readyState == 4 && xhttp.status ==201) {
+          var response = JSON.parse(xhttp.responseText);
+          console.log(response)
+          history.go(0);       
+          }
+        }
+  
+        xhttp.open("POST",  server_ip + "suggestion", false);
+        xhttp.setRequestHeader("Content-type", "application/json");
+        xhttp.setRequestHeader("X-CSRFToken",csrf_token);
+        var suggestionText = document.getElementById("suggestionText").value
+        xhttp.send(
+            JSON.stringify(
+                {"suggestion" : suggestionText }
+            )
+        );
+        
+      };
+
+   
+
+    
   </script>
 
 </body>
