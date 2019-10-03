@@ -142,6 +142,9 @@ class ServiceMethods:
                 saveData['breakEndTime'] = 'none'
                 saveData['totalBreakTime'] = 'none'
                 saveData['breakStatus'] = 1
+                saveData['dayNum'] = nowDate.day
+                saveData['monthNum'] = nowDate.month
+                saveData['yearNum'] = nowDate.year
                     
  
                 serializer = BreakTimeCheckSerializer(data=saveData)
