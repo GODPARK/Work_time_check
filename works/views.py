@@ -13,8 +13,9 @@ from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 import json
 
-# SERVERIP = "http://192.168.0.4:8000"
-SERVERIP = "http://34.84.171.132"
+#SERVERIP = "http://192.168.0.4:8000"
+#SERVERIP = "http://34.84.171.132"
+SERVERIP = "http://127.0.0.1:8000"
 SERVERAPIIP = SERVERIP + "/works/api/"
 
 # Create your views here.
@@ -107,6 +108,11 @@ def totalWorkApi(request):
     modifyService.py api call
     업무 시간 및 휴식 시간 수동 수정용 API  
 '''
+@api_view(['POST'])
+def modifyWorkSearchApi(request):
+    modifyService = ModifyServiceMethods()
+    return modifyService.modifySearchWork(request.COOKIES['personId'],request.data)
+
 @api_view(['POST'])
 def modifyWorkApi(request):
     modifyService = ModifyServiceMethods()

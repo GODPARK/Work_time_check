@@ -151,7 +151,7 @@
       xhttp.onreadystatechange = function() {
       if ( xhttp.readyState == 4 && xhttp.status ==201) {
         var response = JSON.parse(xhttp.responseText);
-        console.log(response)
+        // console.log(response)
         document.getElementById("currentTimeWork").innerHTML = response.currentTime;              
         }
       }
@@ -168,7 +168,7 @@
       xhttp.onreadystatechange = function() {
       if ( xhttp.readyState == 4 && xhttp.status ==201) {
         var response = JSON.parse(xhttp.responseText);
-        console.log(response)
+        // console.log(response)
         document.getElementById("currentTimeWork").innerHTML = "출근 하셨습니다."              
         }
         else if(xhttp.status==400)
@@ -189,7 +189,7 @@
       xhttp.onreadystatechange = function() {
       if ( xhttp.readyState == 4 && xhttp.status ==201) {
         var response = JSON.parse(xhttp.responseText);
-        console.log(response)
+        // console.log(response)
         document.getElementById("currentTimeWork").innerHTML = "퇴근 하셨습니다.";              
         }
       };
@@ -206,7 +206,7 @@
       xhttp.onreadystatechange = function() {
       if ( xhttp.readyState == 4 && xhttp.status ==201) {
         var response = JSON.parse(xhttp.responseText);
-        console.log(response)
+        // console.log(response)
         document.getElementById("currentTimeBreak").innerHTML = "Break Start !!(" + response.serverTime +")";              
         }
         else if(xhttp.status==400)
@@ -227,7 +227,7 @@
       xhttp.onreadystatechange = function() {
       if ( xhttp.readyState == 4 && xhttp.status ==201) {
         var response = JSON.parse(xhttp.responseText);
-        console.log(response)
+        // console.log(response)
         document.getElementById("currentTimeBreak").innerHTML = "Break End !! (" + response.serverTime +")";              
         }
       };
@@ -244,7 +244,7 @@
       xhttp.onreadystatechange = function() {
       if ( xhttp.readyState == 4 && xhttp.status ==201) {
         var response = JSON.parse(xhttp.responseText);
-        console.log(response)
+        // console.log(response)
         document.getElementById("currentTimeBreak").innerHTML = response.currentTime;              
         }
       }
@@ -261,7 +261,7 @@
       xhttp.onreadystatechange = function() {
       if ( xhttp.readyState == 4 && xhttp.status ==201) {
         var response = JSON.parse(xhttp.responseText);
-        console.log(response)
+        // console.log(response)
         document.getElementById("currentTimeWork").innerHTML = "DAY OFF!";              
         }
       }
@@ -281,7 +281,7 @@
         xhttp.onreadystatechange = function() {
         if ( xhttp.readyState == 4 && xhttp.status ==201) {
           var response = JSON.parse(xhttp.responseText);
-          console.log(response)
+          // console.log(response)
           document.getElementById("prefixItem").innerHTML = response.serverDate + "의 근무시간은!"
           document.getElementById("currentTimeWork").innerHTML = response.currentTime;              
           }

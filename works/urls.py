@@ -12,5 +12,6 @@ urlpatterns = [
     path('api/break/total', views.currentBreakApi, name="CurrentBreak"),
     path('api/dayoff', views.dayOffApi, name="dayOff"),
     path('api/total', views.totalWorkApi, name="totalTime"),
+    path('api/modify/search',views.modifyWorkSearchApi, name="modifySearchWork"),
     path('api/modify/work',views.modifyWorkApi, name="modifyWork")
 ]

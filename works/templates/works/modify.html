@@ -78,10 +78,56 @@
                     <div class="input-group mb-3">
                         <input type="date" id="workDate" class="form-control" aria-label="date" aria-describedby="button-addon2">
                         <div class="input-group-append">
-                            <button class="btn btn-primary" type="button" id="button-addon2" onclick="modifyWorkTime('{{csrf_token}}','{{serverApiIp}}')"> search </button>
+                            <button class="btn btn-primary" type="button" id="button-addon2" onclick="modifySearchWorkTime('{{csrf_token}}','{{serverApiIp}}')"> search </button>
                         </div>
                     </div>
                 </div>
+            </div>
+            <br>
+            <div class="card text-white bg-dark">
+              <div class="card-body">
+                <h5> 출근 시간 편집</h5>
+                <div class="row">
+                  <div class="col">
+                    <p>before</p>
+                    <h5 id="beforeStartWork" style="text-align:center"></h5>
+                  </div>
+                  <div class="col">
+                    <p> after</p>
+                    <div class="input-group mb-3">
+                      <input type="text" id="workStartTime" class="form-control" placeholder="00:00:00 형식 기입">
+                    </div>
+                  </div>
+                </div>
+                <br>
+                <h5> 퇴근 시간 편집 </h5>
+                <div class="row">
+                  <div class="col">
+                    <p> before</p>
+                    <h5 id="beforeEndWork" style="text-align:center"> </h5>
+                  </div>
+                  <div class="col">
+                    <p> after</p>
+                    <div class="input-group mb-3">
+                        <input type="text" id="workEndTime" class="form-control" placeholder="00:00:00 형식 기입">
+                    </div>
+                  </div>
+                </div>
+                <br>
+                <button class="btn btn-primary btn-block" onclick="modifyWorkTime('{{csrf_token}}','{{serverApiIp}}')"> save </button>
+                <br>
+                <h5> 최종 시간 확인 ( 휴게 시간 반영 되지 않은 시간) </h5>
+                <div class="row">
+                  <div class="col">
+                    <p> before </p>
+                    <h5 id="beforeTotalWork" style="text-align:center"></h5>
+                  </div>
+                  <div class="col">
+                    <p> after </p>
+                    <h5 id="afterTotalWork" style="text-align:center"></h5>
+                  </div>
+                </div>
+              </div>
             </div>
       </div>
 
@@ -107,7 +153,9 @@
       xhttp.onreadystatechange = function() {
       if ( xhttp.readyState == 4 && xhttp.status ==201) {
         var response = JSON.parse(xhttp.responseText);
-        console.log(response)              
+        console.log(response);
+        alert("변경되었습니다.")
+        document.getElementById("afterTotalWork").innerHTML = response.afterTotalWork;
         }
       }
 
@@ -115,8 +163,55 @@
       xhttp.setRequestHeader("Content-type", "application/json");
     //   var csrf_token = '{{csrf_token}}';
       xhttp.setRequestHeader("X-CSRFToken",csrf_token);
+      var modifyWorkStartTime = document.getElementById("workStartTime").value
+      var modifyWorkEndTime = document.getElementById("workEndTime").value
       var searchDate = document.getElementById("workDate").value
-      xhttp.send(JSON.stringify({ "searchDate" : searchDate }));
+      
+      if(confirm("저장하시겠습니까?"))
+      {
+        xhttp.send(JSON.stringify(
+          {
+          "searchDate" : searchDate,
+          "modifyWorkStartTime" :  modifyWorkStartTime,
+          "modifyWorkEndTime" : modifyWorkEndTime
+          }));
+      }
+      
+    };
+    
+    function modifySearchWorkTime(csrf_token, server_ip) {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+      if ( xhttp.readyState == 4 && xhttp.status ==201) {
+        var response = JSON.parse(xhttp.responseText);
+        // console.log(response);
+
+        if( response.result =="fail")
+        {
+          alert("검색에 실패하였습니다.") 
+        }
+        else 
+        {
+          document.getElementById("beforeStartWork").innerHTML=response.beforeStartWork; 
+          document.getElementById("beforeEndWork").innerHTML=response.beforeEndWork;         
+          document.getElementById("beforeTotalWork").innerHTML=response.beforeTotalWork;
+        }
+        }
+      }
+
+      xhttp.open("POST",  server_ip + "modify/search", false);
+      xhttp.setRequestHeader("Content-type", "application/json");
+    //   var csrf_token = '{{csrf_token}}';
+      xhttp.setRequestHeader("X-CSRFToken",csrf_token);
+      var searchDate = document.getElementById("workDate").value
+      if ( searchDate == "" )
+      {
+        alert("수정을 원하는 날짜를 입력해주세요!!");
+      }
+      else
+      {
+        xhttp.send(JSON.stringify({"searchDate" : searchDate}));
+      }
     };
     
   </script>

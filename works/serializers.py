@@ -35,6 +35,9 @@ class BreakTimeCheckSerializer(serializers.HyperlinkedModelSerializer):
             'breakEndTime',
             'totalBreakTime',
             'breakStatus',
+            'dayNum',
+            'monthNum',
+            'yearNum'
         )
 
 class CurrentStatusSerializers(serializers.HyperlinkedModelSerializer):
