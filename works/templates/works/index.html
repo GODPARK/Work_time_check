@@ -1,143 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
-
-  <title>PJH Work</title>
-
-  <!-- Bootstrap core CSS -->
-  <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-  <!-- Custom styles for this template -->
-  <link href="/static/css/simple-sidebar.css" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="/static/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-
-</head>
-
-<body>
-  <div class="d-flex" id="wrapper">
-
-    <!-- Sidebar -->
-    <div class="bg-light border-right" id="sidebar-wrapper">
-      <div class="sidebar-heading"><strong>Time is Gold</strong> </div>
-      <div class="list-group list-group-flush">
-        <a href="{{serverIp}}/notice" class="list-group-item list-group-item-action bg-light"><i class="fa fa-bell"></i> notice</a>
-        <a href="{{serverIp}}/works" class="list-group-item list-group-item-action bg-light">Today</a>
-        <a href="{{serverIp}}/month" class="list-group-item list-group-item-action bg-light">Month</a>
-        <a href="{{serverIp}}/modify" class="list-group-item list-group-item-action bg-light">Modify</a>
-        <a href="{{serverIp}}/logout" class="list-group-item list-group-item-action bg-light">logout</a>
+{% extends "base.html" %}
+{% block content %}
+<br>
+<div class="container-fluid">
+  <br>
+  <div class="card text-white bg-dark">
+    <div class="card-body">
+    {% csrf_token %}
+      <h2 class="mt-4" style="text-align:center"> Work Time <i class="fa fa-clock-o"></i></h2>
+      <p></p>
+      <h5 id="prefixItem" style="text-align:center;color:silver"></h5>
+      <strong><h1 id="currentTimeWork" style="text-align:center"></h1></strong>
+      
+      <br>
+      <div class="progress">
+        <div id="workProgress" class="progress-bar bg-danger" role="progressbar" style="width: 100%"></div>
+      </div>
+      <p style="text-align:right;color:slategrey">8h</p>
+      
+      <div class="row">
+        <div class="col">
+          <div class="btn-group" role="group">
+            <button class="btn btn-light active" onclick="workStartButton('{{csrf_token}}','{{serverApiIp}}')" > 출근 </button>
+            <button class="btn btn-light" onclick="workEndButton('{{csrf_token}}','{{serverApiIp}}')"> 퇴근 </button>
+            <!-- <button class="btn btn-primary" onclick="dayOffButton('{{csrf_token}}')"> 휴가 </button>  -->
+          </div>
+        </div>
+        
+        <div class="col">
+          <div class="btn-group" role="group" style="float:right">
+            <button class="btn btn-primary" onclick="loadWorkTime('{{csrf_token}}','{{serverApiIp}}')"> 근무 시간</button>
+            <button class="btn btn-danger" onclick="totalWorkTime('{{csrf_token}}','{{serverApiIp}}')"> 최종 시간</button>
+          </div>
+        </div>  
       </div>
     </div>
-    <!-- /#sidebar-wrapper -->
-
-    <!-- Page Content -->
-    <div id="page-content-wrapper">
-
-      <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-        <button class="btn btn-dark" id="menu-toggle"> Menu</button>
-
-        <h4>
-            <i class="fa fa-user-circle"></i> {{ personId }}
-        </h4>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-            <li class="nav-item active">
-              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/login">login</a>
-              <a class="nav-link" href="/logout">logout</a>
-            </li>
-            <!-- <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Dropdown
-              </a>
-              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#">Action</a>
-                <a class="dropdown-item" href="#">Another action</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">Something else here</a>
-              </div>
-            </li> -->
-          </ul>
-        </div>
-      </nav>
-      <br>
-      <div class="container-fluid">
-        <br>
-        
-        <div class="card text-white bg-dark">
-          <div class="card-body">
-            {% csrf_token %}
-            <h2 class="mt-4" style="text-align:center"> Work Time <i class="fa fa-clock-o"></i></h2>
-            <p></p>
-            <h5 id="prefixItem" style="text-align:center;color:silver"></h5>
-            <strong><h1 id="currentTimeWork" style="text-align:center"></h1></strong>
-            <br>
-            <div class="progress">
-              <div id="workProgress" class="progress-bar bg-danger" role="progressbar" style="width: 100%">
-                </div>
-              </div>
-              <p style="text-align:right;color:slategrey">8h</p>
-              <div class="row">
-                <div class="col">
-                  <div class="btn-group" role="group">
-                    <button class="btn btn-light active" onclick="workStartButton('{{csrf_token}}','{{serverApiIp}}')" > 출근 </button>
-                    <button class="btn btn-light" onclick="workEndButton('{{csrf_token}}','{{serverApiIp}}')"> 퇴근 </button>
-                    <!-- <button class="btn btn-primary" onclick="dayOffButton('{{csrf_token}}')"> 휴가 </button>  -->
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="btn-group" role="group" style="float:right">
-                      <button class="btn btn-primary" onclick="loadWorkTime('{{csrf_token}}','{{serverApiIp}}')"> 근무 시간</button>
-                      <button class="btn btn-danger" onclick="totalWorkTime('{{csrf_token}}','{{serverApiIp}}')"> 최종 시간</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="card-footer">
-                <p>
-                  <small> $ 출근 : 출근 한번만 가능.</small>&nbsp;<br>
-                  <small> $ 퇴근 : 퇴근 버튼 여러번 가능.</small>&nbsp;<br>
-                  <small> $ 근무 시간 = 체류 시간 </small>&nbsp;<br>
-                  <small> $ 최종 시간 = 체류 시간 - 휴식 시간 - 점심시간 1h </small>
-                </p>
-              </div>
-            </div>
-          </div>
-          <br>
-          <div class="container-fluid">
-            <a class="btn btn-dark btn-block" role="button" href="{{serverIp}}/modify"><i class="fa fa-cog"></i> 수동 시간 설정</a>
-          </div>
-          <div class="container-fluid">
-            <br>
-          <div class="card text-white bg-success">
-            <div class="card-body">
-              {% csrf_token %}
-              <h2 class="mt-4" style="text-align:center"> Break Time </h2>
-              <p></p>
-              <h1 id="currentTimeBreak" style="text-align:center"></h1>
-              <div class="btn-group" role="group">
-                <button class="btn btn-light" onclick="loadBreakTime('{{csrf_token}}','{{serverApiIp}}')"> 쉬는 시간 </button>
-                <button class="btn btn-primary" onclick="breakStartButton('{{csrf_token}}','{{serverApiIp}}')" > 시작 </button>
-                <button class="btn btn-warning" onclick="breakEndButton('{{csrf_token}}','{{serverApiIp}}')"> 종료 </button> 
-              </div>
-            </div>
-          </div>
-        </div>
+              
+    <div class="card-footer">
+      <p>
+        <small> $ 출근 : 출근 한번만 가능.</small>&nbsp;<br>
+        <small> $ 퇴근 : 퇴근 버튼 여러번 가능.</small>&nbsp;<br>
+        <small> $ 근무 시간 = 체류 시간 </small>&nbsp;<br>
+        <small> $ 최종 시간 = 체류 시간 - 휴식 시간 - 점심시간 1h </small>
+      </p>
     </div>
-    <!-- /#page-content-wrapper -->
-
+            
+  </div> 
+</div>
+          
+<br>
+<div class="container-fluid">
+  <a class="btn btn-dark btn-block" role="button" href="{{serverIp}}/modify"><i class="fa fa-cog"></i> 수동 시간 설정</a>
+</div>
+                    
+<div class="container-fluid">
+  <br>
+  <div class="card text-white bg-success">
+    <div class="card-body">
+      {% csrf_token %}
+      <h2 class="mt-4" style="text-align:center"> Break Time </h2>
+      <p></p>
+      <h1 id="currentTimeBreak" style="text-align:center"></h1>
+      <div class="btn-group" role="group">
+        <button class="btn btn-light" onclick="loadBreakTime('{{csrf_token}}','{{serverApiIp}}')"> 쉬는 시간 </button>
+        <button class="btn btn-primary" onclick="breakStartButton('{{csrf_token}}','{{serverApiIp}}')" > 시작 </button>
+        <button class="btn btn-warning" onclick="breakEndButton('{{csrf_token}}','{{serverApiIp}}')"> 종료 </button> 
+      </div>
+    </div>
   </div>
+</div>
+
+    <!-- /#page-content-wrapper -->
+{% endblock %}
   <!-- /#wrapper -->
 
   <!-- Bootstrap core JavaScript -->
@@ -146,6 +79,8 @@
 
   <!-- <script src="/static/vendor/dev/indexButton.js"></script> -->
   <!-- Menu Toggle Script -->
+
+  {% block script %}
   <script>
     $("#menu-toggle").click(function(e) {
       e.preventDefault();
@@ -323,6 +258,8 @@
 
     
   </script>
+  {% endblock %}
+
 
 </body>
 

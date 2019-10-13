@@ -1,128 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+{% block content %}
 
-<head>
-
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
-
-  <title>PJH Work</title>
-
-  <!-- Bootstrap core CSS -->
-  <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-  <!-- Custom styles for this template -->
-  <link href="/static/css/simple-sidebar.css" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="/static/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-
-</head>
-
-<body>
-  <div class="d-flex" id="wrapper">
-
-    <!-- Sidebar -->
-    <div class="bg-light border-right" id="sidebar-wrapper">
-      <div class="sidebar-heading"><strong>Time is Gold</strong> </div>
-      <div class="list-group list-group-flush">
-        <a href="{{serverIp}}/notice" class="list-group-item list-group-item-action bg-light"><i class="fa fa-bell"></i> notice</a>
-        <a href="{{serverIp}}/works" class="list-group-item list-group-item-action bg-light">Today</a>
-        <a href="{{serverIp}}/month" class="list-group-item list-group-item-action bg-light">Month</a>
-        <a href="{{serverIp}}/modify" class="list-group-item list-group-item-action bg-light">Modify</a>
-        <a href="{{serverIp}}/logout" class="list-group-item list-group-item-action bg-light">logout</a>
+<br>
+<div class="container-fluid">
+  <br>
+  <h2> Notice. </h2>
+  <div class="card text-white bg-dark">
+    <div class="card-body">
+      {% csrf_token %}
+      <h5> Update 항목</h5>
+      <p> ( Ver. {{updateDate}} ) {{ updateList }}</p>
     </div>
-    </div>
-    <!-- /#sidebar-wrapper -->
-
-    <!-- Page Content -->
-    <div id="page-content-wrapper">
-
-      <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-        <button class="btn btn-dark" id="menu-toggle"> Menu</button>
-
-        <h4>
-            <i class="fa fa-user-circle"></i> {{ personId }}
-        </h4>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-            <li class="nav-item active">
-              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/login">login</a>
-              <a class="nav-link" href="/logout">logout</a>
-            </li>
-            <!-- <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Dropdown
-              </a>
-              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#">Action</a>
-                <a class="dropdown-item" href="#">Another action</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">Something else here</a>
-              </div>
-            </li> -->
-          </ul>
-        </div>
-      </nav>
-      <br>
-      <div class="container-fluid">
-        <br>
-        <h2> Notice. </h2>
-        <div class="card text-white bg-dark">
-            <div class="card-body">
-            {% csrf_token %}
-                <h5> Update 항목</h5>
-                <p> ( Ver. {{updateDate}} ) {{ updateList }}</p>
-            </div>
-        </div>
-        <br>
-        <div class="card text-black bg-light">
-            <div class="card-body">
-            {% csrf_token %}
-                <h5> todo 항목</h5>
-                <p>{{todoList}}</p>
-            </div>
-        </div>
-
-        <br><br>
-        <h2> Suggestions. </h2>
-        <div class="card text-black bg-light">
-            <div class="card-body">
-            {% csrf_token %}
-            <table class="table table-striped">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>User</th>
-                        <th>Content</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in suggestion %}
-                    <tr> 
-                        <td>{{ item.personId }}</td>
-                        <td>{{ item.content }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <div class="input-group">
-                <textarea id="suggestionText" class="form-control" placeholder="건의 사항"></textarea>
-                <button class="btn btn-primary" onclick="saveSuggestions('{{csrf_token}}','{{serverApiIp}}')">save</button>
-            </div>
-            </div>
-        </div>
-    </div>
-    <!-- /#page-content-wrapper -->
-
   </div>
-  <!-- /#wrapper -->
+  
+  <br>      
+  <div class="card text-black bg-light">
+    <div class="card-body">
+      {% csrf_token %}
+      <h5> todo 항목</h5>
+      <p>{{todoList}}</p>
+    </div>
+  </div>
+      
+  <br><br>
+  <h2> Suggestions. </h2>
+  <div class="card text-black bg-light">
+    <div class="card-body">
+      {% csrf_token %}
+      <table class="table table-striped">
+        <thead class="thead-dark">          
+          <tr>
+            <th>User</th>
+            <th>Content</th>
+          </tr>        
+        </thead>
+                
+        <tbody>
+          {% for item in suggestion %}
+          <tr> 
+            <td>{{ item.personId }}</td>
+            <td>{{ item.content }}</td>
+          </tr>
+          {% endfor %}        
+        </tbody>      
+      </table>
+            
+      <div class="input-group">
+        <textarea id="suggestionText" class="form-control" placeholder="건의 사항"></textarea>
+        <button class="btn btn-primary" onclick="saveSuggestions('{{csrf_token}}','{{serverApiIp}}')">save</button>
+      </div>
+    
+    </div>
+  </div>
+</div>
+{% endblock %}
 
   <!-- Bootstrap core JavaScript -->
   <script src="/static/vendor/jquery/jquery.min.js"></script>
@@ -130,6 +61,7 @@
 
   <!-- <script src="/static/vendor/dev/indexButton.js"></script> -->
   <!-- Menu Toggle Script -->
+  {% block script %}
   <script>
     $("#menu-toggle").click(function(e) {
       e.preventDefault();
@@ -163,6 +95,7 @@
 
     
   </script>
+  {% endblock %}
 
 </body>
 
