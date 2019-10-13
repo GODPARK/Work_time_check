@@ -7,15 +7,17 @@ from .models import WorkTimeCheck, BreakTimeCheck, CurrentStatus ,Suggestion
 from datetime import datetime
 from .services import ServiceMethods
 from .modifyServices import ModifyServiceMethods
+from .monthServices import MonthServiceMethods
 from django.conf import settings
 from django.contrib import auth
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 import json
 
+
 #SERVERIP = "http://192.168.0.4:8000"
 SERVERIP = "http://34.84.171.132"
-#SERVERIP = "http://127.0.0.1:8000"
+# SERVERIP = "http://127.0.0.1:8000"
 SERVERAPIIP = SERVERIP + "/works/api/"
 
 # Create your views here.
@@ -51,7 +53,10 @@ def logout(request):
 @login_required
 def month(request):
     if 'personId' in request.COOKIES:
+        service = MonthServiceMethods()
+        serviceData = service.monthListDict(request.COOKIES['personId'])
         data = { 'personId' : request.COOKIES['personId'], 'serverApiIp' : SERVERAPIIP, 'serverIp' : SERVERIP }
+        data.update(serviceData)
         return render(request,'works/month.html', data )
     else:
         return render(request,'works/login.html')
