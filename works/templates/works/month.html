@@ -3,25 +3,49 @@
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
+
 <div class="container-fluid">
   <br>
-  <!-- <div class="row"> -->
-    <!-- <div class="col"> -->
-      <div id="chart_div" style="width: 100%; height: 500px;"></div>
-    <!-- </div> -->
-  <!-- </div> -->
+  <div class="card bg-dark">
+    <div class="card-body">
+      <h3 style="color: white; text-align: center;">{{ monthInfo }} 현황 </h3>
+    </div>
+  </div>
 </div>
 
-<br>
+<div class="container-fluid">
+  <br>
+  <div class="row">
+    <div class="col">
+      <h5 style="text-align:left;"> 1. 출퇴근 시간 현황 </h5>   
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <div class="col">
+      <div id="start_chart_div" style="width: 100%; height: 100%;"></div>
+    </div>
+    <div class="col">
+      <div id="end_chart_div" style="width: 100%; height: 100%;"></div>
+    </div>
+  </div>
+</div>
+
 <div class="container-fluid">
     <br><br>
-    <h2> Month. {{ totalTime }}</h2>
+    <h5 style="text-align:left;"> 2. 한달 총 근무 시간 </h5>
+    <!-- <div class="card bg-warning"> -->
+      <h1 style="text-align: center;"> {{ totalTime }}</h1>
+    <!-- </div> -->
+    
+    <br>
     <div class="row">
       <div class="col">
-    <div class="card text-black bg-light">
-      <div class="card-body">
-        {% csrf_token %}
-        <table class="table table-striped">
+        <h5 style="text-align:left;"> 3. 한달 근무 현황 </h5>
+        <div class="card text-black bg-light">
+          <div class="card-body">
+            {% csrf_token %}
+        <table class="table table-striped table-sm">
           <thead class="thead-dark">          
             <tr>
               <th>Date</th>
@@ -34,10 +58,20 @@
           <tbody>
             {% for item in monthWork %}
             <tr> 
-              <td>{{ item.todayDate }}</td>
+              <td><b>{{ item.todayDate }}</b></td>
               <td>{{ item.workStartTime }}</td>
-              <td>{{ item.workEndTime }}</td>
-              <td>{{ item.totalWorkTime }}</td>
+              <td>
+                {{ item.workEndTime }}
+                {% if item.workEndTime == "none" %}
+                  <span class="badge badge-danger">퇴근 미처리</span>
+                {% endif %}
+              </td>
+              <td>
+                {{ item.totalWorkTime }}
+                {% if item.totalWorkTime == "none" %}
+                  <span class="badge badge-danger">퇴근 미처리</span>
+                {% endif %}
+              </td>
             </tr>
             {% endfor %}        
           </tbody>      
@@ -73,42 +107,68 @@
         var startTimeList =  startTime.replace("[","").replace("]","").split(", ")
         var endTimeList =  endTime.replace("[","").replace("]","").split(", ")
     
-        var data = google.visualization.arrayToDataTable([
-          ['Work', 'Start', 'End'],
-          ['3',  Number(startTimeList[3]),      Number(endTimeList[3])],
-          ['4',  Number(startTimeList[4]),      Number(endTimeList[4])],
-          ['5',  Number(startTimeList[5]),      Number(endTimeList[5])],
-          ['6',  Number(startTimeList[6]),      Number(endTimeList[6])],
-          ['7',  Number(startTimeList[7]),      Number(endTimeList[7])],
-          ['8',  Number(startTimeList[8]),      Number(endTimeList[8])],
-          ['9',  Number(startTimeList[9]),      Number(endTimeList[9])],
-          ['10',  Number(startTimeList[10]),      Number(endTimeList[10])],
-          ['11',  Number(startTimeList[11]),      Number(endTimeList[11])],
-          ['12',  Number(startTimeList[12]),      Number(endTimeList[12])],
-          ['13',  Number(startTimeList[13]),      Number(endTimeList[13])],
-          ['14',  Number(startTimeList[14]),      Number(endTimeList[14])],
-          ['15',  Number(startTimeList[15]),       Number(endTimeList[15])],
-          ['16',  Number(startTimeList[16]),       Number(endTimeList[16])],
-          ['17',  Number(startTimeList[17]),       Number(endTimeList[17])],
-          ['18',  Number(startTimeList[18]),       Number(endTimeList[18])],
-          ['19',  Number(startTimeList[19]),       Number(endTimeList[19])],
-          ['20',  Number(startTimeList[20]),       Number(endTimeList[20])],
-          ['21',  Number(startTimeList[21]),       Number(endTimeList[21])],
-          ['22',  Number(startTimeList[22]),       Number(endTimeList[22])],
-          ['23',  Number(startTimeList[23]),       Number(endTimeList[23])],
-          ['0',  Number(startTimeList[0]),       Number(endTimeList[0])],
-          ['1',  Number(startTimeList[1]),       Number(endTimeList[1])]
+        var startdata = google.visualization.arrayToDataTable([
+          ['Work', 'start'],
+          [ '00 시', Number(startTimeList[0])],
+          [ '01 시', Number(startTimeList[1])],
+          [ '02 시', Number(startTimeList[2])],
+          [ '03 시', Number(startTimeList[3])],
+          [ '04 시', Number(startTimeList[4])],
+          [ '05 시', Number(startTimeList[5])],
+          [ '06 시', Number(startTimeList[6])],
+          [ '07 시', Number(startTimeList[7])],
+          [ '08 시', Number(startTimeList[8])],
+          [ '09 시', Number(startTimeList[9])],
+          [ '10 시', Number(startTimeList[10])],
+          [ '11 시', Number(startTimeList[11])],
+          [ '12 시', Number(startTimeList[12])]
         ]);
 
-        var options = {
-          title: 'Work ( Start | End ) Graph',
-          hAxis: {title: 'Work Time',  titleTextStyle: {color: '#333'}},
-          vAxis: {minValue: 0}
+        var enddata = google.visualization.arrayToDataTable([
+          ['Work', 'end'],
+          ['13 시', Number(endTimeList[13])],
+          ['14 시', Number(endTimeList[14])],
+          ['15 시', Number(endTimeList[15])],
+          ['16 시', Number(endTimeList[16])],
+          ['17 시', Number(endTimeList[17])],
+          ['18 시', Number(endTimeList[18])],
+          ['19 시', Number(endTimeList[19])],
+          ['20 시', Number(endTimeList[20])],
+          ['21 시', Number(endTimeList[21])],
+          ['22 시', Number(endTimeList[22])],
+          ['23 시', Number(endTimeList[23])],
+          ['00 시', Number(endTimeList[0])],
+          ['01 시', Number(endTimeList[1])],
+          ['02 시', Number(endTimeList[2])],
+          ['03 시', Number(endTimeList[3])]
+          
+        ]);
+
+        var startoptions = {
+          title: '출근 시간 현황',
+          pieSliceText: 'label',
+          legend: "none",
+          is3D: true
+          // hAxis: {title: 'Work Time',  titleTextStyle: {color: '#333'}},
+          // vAxis: {minValue: 0},
+          // bar: {groupWidth: "95%"},
         };
 
-        var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
-        chart.draw(data, options);
+        var endoptions = {
+          title: '퇴근 시간 현황',
+          pieSliceText: 'label',
+          legend: "none" ,
+          is3D: true
+          // hAxis: {title: 'Work Time',  titleTextStyle: {color: '#333'}},
+          // vAxis: {minValue: 0},
+          // bar: {groupWidth: "95%"},
+        };
 
+        var chart1 = new google.visualization.PieChart(document.getElementById('start_chart_div'));
+        chart1.draw(startdata, startoptions);
+
+        var chart2 = new google.visualization.PieChart(document.getElementById('end_chart_div'));
+        chart2.draw(enddata, endoptions);
        
       }
 

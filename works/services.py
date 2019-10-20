@@ -30,12 +30,12 @@ class ServiceMethods:
                 totalStringTime = str(totalTime).split('.')[0]
                 workPercent = str(int((int(totalStringTime.split(":")[0]) /8 )*100)) + "%"
 
-                returnData = {"result":"success", "personId":userId, "serverDate":serverDate, "currentTime":totalStringTime, "workPercent" : workPercent, "method":"currentWorkTime"}
+                returnData = {"result":"success", "personId":userId, "serverDate":serverDate, "startTime": todayWork.workStartTime, "currentTime":totalStringTime, "workPercent" : workPercent, "method":"currentWorkTime"}
                 return Response(returnData,status=status.HTTP_201_CREATED)
 
             elif todayWork.workStatus == 2:
                 workPercent = str(int((int(todayWork.totalWorkTime.split(":")[0]) /8 )*100)) + "%"
-                returnData = {"result":"success", "personId":userId, "serverDate":serverDate, "currentTime":todayWork.totalWorkTime, "workPercent" : workPercent, "method":"currentWorkTime"}
+                returnData = {"result":"success", "personId":userId, "serverDate":serverDate, "startTime": todayWork.workStartTime, "currentTime":todayWork.totalWorkTime, "workPercent" : workPercent, "method":"currentWorkTime"}
                 return Response(returnData,status=status.HTTP_201_CREATED)
             elif todayWork.workStatus == 99:
                 returnData = {"result":"success", "personId":userId, "serverDate":serverDate, "currentTime":"DAY OFF", "method":"currentWorkTime"}

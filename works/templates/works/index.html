@@ -15,7 +15,16 @@
       <div class="progress">
         <div id="workProgress" class="progress-bar bg-danger" role="progressbar" style="width: 100%"></div>
       </div>
-      <p style="text-align:right;color:slategrey">8h</p>
+      <div class="row">
+        <div class="col">
+          <p id="startTime" style="text-align:left;color:slategrey"></p>
+
+        </div>
+        <div class="col">
+          <p style="text-align:right;color:slategrey">8h</p>
+
+        </div>
+      </div>
       
       <div class="row">
         <div class="col">
@@ -99,7 +108,7 @@
         document.getElementById("workProgress").innerHTML = response.currentTime;    
         document.getElementById("workProgress").style.width = response.workPercent;
         document.getElementById("workProgress").className ="progress-bar bg-primary"
-             
+        document.getElementById("startTime").innerHTML= response.startTime;
         }
       }
 
@@ -116,7 +125,8 @@
       if ( xhttp.readyState == 4 && xhttp.status ==201) {
         var response = JSON.parse(xhttp.responseText);
         // console.log(response)
-        document.getElementById("currentTimeWork").innerHTML = "출근 하셨습니다."              
+        document.getElementById("currentTimeWork").innerHTML = "출근 하셨습니다."
+        document.getElementById("startTime").innerHTML= response.serverTime;          
         }
         else if(xhttp.status==400)
         {

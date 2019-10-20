@@ -20,6 +20,8 @@ class MonthServiceMethods:
         totalTimeList = [0,0,0]
         totalTime = [0,0,0]
 
+        monthInfo = str(nowDate.year) + "년 " + str(nowDate.month) + "월"
+
         try:
             monthWork = WorkTimeCheck.objects.filter(personId=userId,yearNum=tempYear,monthNum=tempMonth,workStatus__in=[1,2]).all()
             
@@ -40,7 +42,7 @@ class MonthServiceMethods:
             totalTime[0] += totalTimeList[0]
 
 
-            return { "monthWork" : monthWork, "startList" : startList, "endList" : endList, "totalTime" : str(totalTime[0])+":"+str(totalTime[1])+":"+str(totalTime[2])}
+            return { "monthWork" : monthWork, "startList" : startList, "endList" : endList, "monthInfo": monthInfo, "totalTime" : str(totalTime[0])+":"+str(totalTime[1])+":"+str(totalTime[2])}
 
         except:
             return { "monthWork" : [], "startDict" : {}, "endDict" : {}, "totalTime" : "00:00:00"}
